@@ -29,7 +29,7 @@ class remote():
 	    for connection in self.clientConnections:		
 	    	print 'Sending to %s' % connection.url		
 	    	response = connection.call("do_command", self.args.command)		
-		
+	#	connection.notify("do_command", self.args.command)	
 	    print response
 		
     		

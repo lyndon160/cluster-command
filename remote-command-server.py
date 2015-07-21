@@ -14,7 +14,7 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(
-    server_address = ('localhost', 8080),
+    server_address = ('', 8080),
     RequestHandlerClass = RequestHandler
 )
 print "Starting HTTP server ..."

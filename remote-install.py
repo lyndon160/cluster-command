@@ -19,9 +19,9 @@ class remote_installer():
 	    	parser.add_argument('path', help='file you want to copy to remote nodes')
 		self.args = parser.parse_args()
     		for x in self.clients:
-			command = "scp -i spart.key "+self.args.path+" ubuntu@192.168.1."+str(x)+":/home/ubuntu/"
+			command = "scp -i /home/ubuntu/spart.key "+self.args.path+" ubuntu@192.168.1."+str(x)+":/home/ubuntu/"
 			print command
-			call(command, shell=False)	
+			call(command, shell=True)	
 remote_installer().run()		
 		
 		
