@@ -3,7 +3,7 @@
 import sys,argparse		
 import pyjsonrpc
 import json		
-		
+import threading		
 class remote():		
 		
 	def __init__(self):
@@ -71,14 +71,22 @@ class remote():
 	    self.args = self.parser.parse_args()		
 	    print self.args		
 	    response = ""		
-	    for connection in self.clientConnections:
-		print connection.url		
+
 	    for connection in self.clientConnections:		
 	    	print 'Sending to %s' % connection.url		
-	    	response = connection.call("do_command", self.args.command)		
-	#	connection.notify("do_command", self.args.command)	
-	    print response
-		
+	    	
+		t = threading.Thread(target=self.send_and_wait, args=[connection])
+	      #  t = threading.Thread(target=send_and_wait, args=(connection))
+		# threads.append(t)
+		t.start()
+		# response = connection.call("do_command", self.args.command)		
+	#	connection.notify("do_command", self.args.command)
+	    print 'Finished sending' 			
+	def send_and_wait(self,connection):
+	    connection.notify("do_command", self.args.command)
+	    response = connection.call("do_command", "tail /home/ubuntu/nohup.out")
+	    report = str(connection.url) + '\n' + response
+	    print report	
     		
 remote().run()		
 		
