@@ -6,16 +6,17 @@ import json
 		
 class remote():		
 		
-	def __init__(self):		
+	def __init__(self):
+		self.clientConnections = [] 		
 		#Setup address range to send to 201225		
-		self.clients = range(201,225)		
+		'''self.clients = range(201,225)		
 		self.clientConnections = []		
 		for x in self.clients:		
 			self.clientConnections.append(pyjsonrpc.HttpClient(		
 			    url = "http://192.168.1.%s:8080" % x,		
 			    username = "mininet",		
 			    password = "mininet"		
-				))		
+				))	'''	
 	
 		self.parser = argparse.ArgumentParser()
             #parser.add_argument('integers', metavar='R1 R2', type=int, nargs='2', help='select range of ips like 1 255')               
@@ -23,7 +24,7 @@ class remote():
             	self.parser.add_argument('command', help='command you want to run on remote nodes')
             	self.parser.add_argument('range', default=[], nargs='*')
 		self.read_config()
-		self.args = self.parser.parse_args()
+
 
 
 	def read_config(self):
@@ -35,17 +36,43 @@ class remote():
 			print json_data['options'][1]['name']
 			print json_data['options'][2]['name']
 			print json_data['options'][3]['name']		
-	                self.parser.add_argument('--'+json_data['options'][0]['name'], default=[],action='store_true')
-                        self.parser.add_argument('--'+json_data['options'][1]['name'], default=[],action='store_true')
-                        self.parser.add_argument('--'+json_data['options'][2]['name'], default=[],action='store_true')
-                        self.parser.add_argument('--'+json_data['options'][3]['name'], default=[],action='store_true')
+	                self.parser.add_argument('--'+json_data['options'][0]['name'], dest='u'+json_data['options'][0]['name'], default=[],action='store_true')
+                        self.parser.add_argument('--'+json_data['options'][1]['name'], dest='u'+json_data['options'][1]['name'], default=[],action='store_true')
+                        self.parser.add_argument('--'+json_data['options'][2]['name'], dest='u'+json_data['options'][2]['name'], default=[],action='store_true')
+                        self.parser.add_argument('--'+json_data['options'][3]['name'], dest='u'+json_data['options'][3]['name'], default=[],action='store_true')
+	                self.args = self.parser.parse_args()
+			print "args:"
+			print self.args
+			if self.args.ubackground:
+				print "background"
+				for addr in json_data['options'][0]['addresses']:
+					self.clientConnections.append(pyjsonrpc.HttpClient(             
+                            			url = "http://"+addr+":8080" ))   
+			if self.args.u360:
+				print "360"
+				for addr in json_data['options'][1]['addresses']:
+                                        self.clientConnections.append(pyjsonrpc.HttpClient(
+                                                url = "http://"+addr+":8080" ))
+
+			if self.args.u720:
+				print "720"
+				for addr in json_data['options'][2]['addresses']:
+                                        self.clientConnections.append(pyjsonrpc.HttpClient(
+                                                url = "http://"+addr+":8080" ))
+
+			if self.args.u1080:
+				print "1080"
+				for addr in json_data['options'][3]['addresses']:
+                                        self.clientConnections.append(pyjsonrpc.HttpClient(
+                                                url = "http://"+addr+":8080" ))
 
 
 	def run(self):		
-	    self.args = self.arser.parse_args()		
+	    self.args = self.parser.parse_args()		
 	    print self.args		
 	    response = ""		
-		
+	    for connection in self.clientConnections:
+		print connection.url		
 	    for connection in self.clientConnections:		
 	    	print 'Sending to %s' % connection.url		
 	    	response = connection.call("do_command", self.args.command)		
