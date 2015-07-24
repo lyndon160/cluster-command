@@ -2,6 +2,7 @@
 # coding: utf8		
 import sys,argparse		
 import pyjsonrpc
+import time
 import json		
 import threading		
 class remote():		
@@ -30,38 +31,26 @@ class remote():
 	def read_config(self):
 		with open("config.json") as json_file:
 	    		json_data = json.load(json_file)
-    			print(json_data)
-			print 'Options\n======='
-			print json_data['options'][0]['name']
-			print json_data['options'][1]['name']
-			print json_data['options'][2]['name']
-			print json_data['options'][3]['name']		
 	                self.parser.add_argument('--'+json_data['options'][0]['name'], dest='u'+json_data['options'][0]['name'], default=[],action='store_true')
                         self.parser.add_argument('--'+json_data['options'][1]['name'], dest='u'+json_data['options'][1]['name'], default=[],action='store_true')
                         self.parser.add_argument('--'+json_data['options'][2]['name'], dest='u'+json_data['options'][2]['name'], default=[],action='store_true')
                         self.parser.add_argument('--'+json_data['options'][3]['name'], dest='u'+json_data['options'][3]['name'], default=[],action='store_true')
 	                self.args = self.parser.parse_args()
-			print "args:"
-			print self.args
 			if self.args.ubackground:
-				print "background"
 				for addr in json_data['options'][0]['addresses']:
 					self.clientConnections.append(pyjsonrpc.HttpClient(             
                             			url = "http://"+addr+":8080" ))   
 			if self.args.u360:
-				print "360"
 				for addr in json_data['options'][1]['addresses']:
                                         self.clientConnections.append(pyjsonrpc.HttpClient(
                                                 url = "http://"+addr+":8080" ))
 
 			if self.args.u720:
-				print "720"
 				for addr in json_data['options'][2]['addresses']:
                                         self.clientConnections.append(pyjsonrpc.HttpClient(
                                                 url = "http://"+addr+":8080" ))
 
 			if self.args.u1080:
-				print "1080"
 				for addr in json_data['options'][3]['addresses']:
                                         self.clientConnections.append(pyjsonrpc.HttpClient(
                                                 url = "http://"+addr+":8080" ))
@@ -69,25 +58,36 @@ class remote():
 
 	def run(self):		
 	    self.args = self.parser.parse_args()		
-	    print self.args		
 	    response = ""		
-
+	    print "Client list \n==========="
 	    for connection in self.clientConnections:		
-	    	print 'Sending to %s' % connection.url		
+	    	print connection.url		
 	    	
 		t = threading.Thread(target=self.send_and_wait, args=[connection])
 	      #  t = threading.Thread(target=send_and_wait, args=(connection))
 		# threads.append(t)
 		t.start()
+
+                response = connection.call("do_command", "tail -n 1 /home/ubuntu/nohup.out")
+                if "200" in response:
+                    response = '\033[92m'+"[OK]"+"\x1b[0m"
+                else:
+                    response = "'\033[91m'"+"[FAIL]"+"\x1b[0m"
+                report = str(connection.url) + '::=' + response
+                sys.stdout.write('\x1b[0m')
+                print report
+                sys.stdout.write('\x1b[0m')
+
+
+
 		# response = connection.call("do_command", self.args.command)		
 	#	connection.notify("do_command", self.args.command)
-	    print 'Finished sending' 			
+	    print 'Calls sent\n\n' 			
+	    '''sys.stdout.write('\033[0m')'''
 	def send_and_wait(self,connection):
-	    connection.notify("do_command", self.args.command)
-	    response = connection.call("do_command", "tail /home/ubuntu/nohup.out")
-	    report = str(connection.url) + '\n' + response
-	    print report	
-    		
+	    response = connection.call("do_command", self.args.command)
+    	    time.sleep(3)
+	    print response
 remote().run()		
 		
 		

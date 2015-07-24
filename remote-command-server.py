@@ -6,9 +6,8 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
   @pyjsonrpc.rpcmethod
   def do_command(self, command):
 
-
     output = subprocess.check_output(command, shell=True)
-
+    '''subprocess.call(command, shell=True)'''
     return output
 
 
