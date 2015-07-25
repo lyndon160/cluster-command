@@ -13,6 +13,10 @@ The options shown are configurable in the config.json file. For example, the --7
 
 This is to be ran on all of the hosts you wish to control.
 
+./remote-install.py
+
+This copies a file to all nodes in the hardcoded range (201,225). It is useful for installing script for use in experiements, or for updating the remote-comand-server.py 
+
 Scripts
 =====
 ./reset.sh 
