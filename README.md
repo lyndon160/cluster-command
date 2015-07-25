@@ -10,6 +10,7 @@ The options shown are configurable in the config.json file. For example, the --7
 
 
 ./remote-command-server.py
+
 This is to be ran on all of the hosts you wish to control.
 
 Scripts
