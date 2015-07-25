@@ -1,6 +1,6 @@
 cluster_command
 ===============
-Simple rpc client server that provides execution of a command on many machines
+Simple rpc client server that provides execution of a command across many machines
 
 Usage
 =====
@@ -15,7 +15,7 @@ This is to be ran on all of the hosts you wish to control.
 
 ./remote-install.py
 
-This copies a file to all nodes in the hardcoded range (201,225). It is useful for installing script for use in experiements, or for updating the remote-comand-server.py 
+This copies a file to all nodes in the hardcoded range (201,225). It is useful for installing script for use in experiments, or for updating the remote-comand-server.py 
 
 Scripts
 =====
